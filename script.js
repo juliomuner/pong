@@ -10,6 +10,8 @@ let tela = document.querySelector('canvas')
 let pincel = tela.getContext('2d')
 pincel.fillStyle = 'black'
 pincel.fillRect(0,0,600,400)
+pincel.fillStyle = 'white'
+pincel.fillRect(0,400,600,30)
 
 function desenhaBolinha(x,y) {
     pincel.fillStyle = 'white'
@@ -24,14 +26,26 @@ function limpaRastroBolinha(x,y){
     pincel.arc(x-1,y,raio+10,0,Math.PI*2)
     pincel.fill()
 }
-
+let vida = 4
 function colide() {
     let colideA = (yBolinha >= yRaqueteA && yBolinha <= yRaqueteA+80 && xBolinha <= 15+raio) ? true : false
+    let colideB = true
     if (xBolinha >= 600-raio) {
         fatorX = -1
+        if (colideB == false) {
+            vida++
+            footer.innerHTML = vida+1 // só pra ve o html
+            desenhaPixel(vida,'blue')
+        }
     } else if (xBolinha <= raio || colideA) {
         fatorX = +1
+        if (colideA == false) {
+            vida--
+            desenhaPixel(vida,'red')
+            footer.innerHTML = vida+1 // só pra ve o html
+        }
     }
+
     if (yBolinha >= 400-raio) {
         fatorY = -1
     } else if (yBolinha <= raio) {
@@ -44,7 +58,7 @@ function desenhaRaqueteA(y) {
     pincel.fillRect (10,y,5,80)
 }
 
-// CRIANDO RAQUETE AUTOMATICA B
+// RAQUETE-B AUTOMATICA
 function desenhaRaqueteB(y) {
     if (y > 100 && y <= 440) {
         pincel.fillStyle = 'black'  // limpar rastro da raquete
@@ -52,7 +66,8 @@ function desenhaRaqueteB(y) {
         pincel.fillStyle = 'white'
         pincel.fillRect (590,y-(25*ataque),5,80)  // inteligencia artificial
     }
-    }
+}
+// RAQUETE-B AUTOMATICA
 
 // MOVENDO COM SETAS
 var cima = 38;
@@ -72,7 +87,7 @@ function leDoTeclado(evento) {
 document.onkeydown = leDoTeclado
 // MOVENDO COM SETAS
 
-// Refresh
+// REFRESH
 setInterval(refresh, velocidadeXBolinha)
 
 function refresh() {
@@ -81,7 +96,32 @@ function refresh() {
     desenhaRaqueteB(yBolinha)
     desenhaBolinha(xBolinha,yBolinha)
     colide()
+    pontua()
     xBolinha = xBolinha + fatorX * ataque
     yBolinha = yBolinha + fatorY * ataque
     
 }
+// REFRESH
+
+// SISTEMA DE PONTOS
+function pontua(){
+    for (var x = 0; x <= vida; x++) { 
+        let cor = 'blue'
+        desenhaPixel(x,cor)
+    }
+    for (var x = vida+1; x < 10; x++) { 
+        let cor = 'red'
+        desenhaPixel(x,cor)
+    } 
+}
+
+
+function desenhaPixel(x,cor) {
+    pincel.fillStyle = cor
+    pincel.fillStroke = 'black'
+    pincel.fillRect(60*x,400,60,40)
+    pincel.strokeRect(60*x,400,60,40)
+}
+// SISTEMA DE PONTOS
+
+var footer = document.querySelector('footer') // só para ver o codigo funcionante
