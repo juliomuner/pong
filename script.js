@@ -25,8 +25,9 @@ function limpaRastroBolinha(x,y){
     pincel.fill()
 }
 
-function moveBolinha() {
+function refresh() {
     limpaRastroBolinha(xBolinha,yBolinha)
+    desenhaRaqueteA()
     desenhaBolinha(xBolinha,yBolinha)
     colide()
     xBolinha = xBolinha + fatorX * ataque
@@ -46,6 +47,15 @@ function colide() {
         fatorY = +1
     }
 }
-colide
 
-setInterval(moveBolinha, velocidadeXBolinha)
+
+
+
+function desenhaRaqueteA() {
+    pincel.fillStyle = 'white'
+    pincel.fillRect (10,10,5,80)
+
+}
+desenhaRaqueteA()
+
+setInterval(refresh, velocidadeXBolinha)
