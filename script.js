@@ -25,16 +25,6 @@ function limpaRastroBolinha(x,y){
     pincel.fill()
 }
 
-function refresh() {
-    limpaRastroBolinha(xBolinha,yBolinha)
-    desenhaRaqueteA()
-    desenhaBolinha(xBolinha,yBolinha)
-    colide()
-    xBolinha = xBolinha + fatorX * ataque
-    yBolinha = yBolinha + fatorY * ataque
-    
-}
-
 function colide() {
     if (xBolinha >= 600-raio) {
         fatorX = -1
@@ -48,14 +38,38 @@ function colide() {
     }
 }
 
-
-
-
-function desenhaRaqueteA() {
+function desenhaRaqueteA(y) {
     pincel.fillStyle = 'white'
-    pincel.fillRect (10,10,5,80)
-
+    pincel.fillRect (10,y,5,80)
 }
-desenhaRaqueteA()
 
+// MOVENDO COM SETAS
+var cima = 38;
+var baixo = 40;
+
+let yRaqueteA = 10
+function leDoTeclado(evento) { 
+    if (evento.keyCode == baixo && yRaqueteA <= 300) {
+        yRaqueteA=yRaqueteA+30
+    } else if (evento.keyCode == cima && yRaqueteA >= 20) {
+        yRaqueteA=yRaqueteA-30
+    }
+    pincel.fillStyle = 'black'  // limpar rastro da raquete
+    pincel.fillRect(0,0,15,400) // limpar rastro da raquete
+    desenhaRaqueteA(yRaqueteA)
+}
+document.onkeydown = leDoTeclado
+// MOVENDO COM SETAS
+
+// Refresh
 setInterval(refresh, velocidadeXBolinha)
+
+function refresh() {
+    limpaRastroBolinha(xBolinha,yBolinha)
+    desenhaRaqueteA(yRaqueteA)
+    desenhaBolinha(xBolinha,yBolinha)
+    colide()
+    xBolinha = xBolinha + fatorX * ataque
+    yBolinha = yBolinha + fatorY * ataque
+    
+}
