@@ -26,9 +26,10 @@ function limpaRastroBolinha(x,y){
 }
 
 function colide() {
+    let colideA = (yBolinha >= yRaqueteA && yBolinha <= yRaqueteA+80 && xBolinha <= 15+raio) ? true : false
     if (xBolinha >= 600-raio) {
         fatorX = -1
-    } else if (xBolinha <= raio) {
+    } else if (xBolinha <= raio || colideA) {
         fatorX = +1
     }
     if (yBolinha >= 400-raio) {
