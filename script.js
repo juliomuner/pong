@@ -4,6 +4,7 @@ let raio = 10
 let velocidadeXBolinha = 10
 let fatorX = +1
 let fatorY = -1
+let ataque = 4
 
 let tela = document.querySelector('canvas')
 let pincel = tela.getContext('2d')
@@ -20,7 +21,7 @@ function desenhaBolinha(x,y) {
 function limpaRastroBolinha(x,y){
     pincel.fillStyle = 'black'
     pincel.beginPath()
-    pincel.arc(x-1,y,raio+5,0,Math.PI*2)
+    pincel.arc(x-1,y,raio+10,0,Math.PI*2)
     pincel.fill()
 }
 
@@ -28,20 +29,20 @@ function moveBolinha() {
     limpaRastroBolinha(xBolinha,yBolinha)
     desenhaBolinha(xBolinha,yBolinha)
     colide()
-    xBolinha = xBolinha + fatorX 
-    yBolinha = yBolinha + fatorY
+    xBolinha = xBolinha + fatorX * ataque
+    yBolinha = yBolinha + fatorY * ataque
     
 }
 
 function colide() {
-    if (xBolinha === 600-raio) {
+    if (xBolinha >= 600-raio) {
         fatorX = -1
-    } else if (xBolinha === raio) {
+    } else if (xBolinha <= raio) {
         fatorX = +1
     }
-    if (yBolinha === 400-raio) {
+    if (yBolinha >= 400-raio) {
         fatorY = -1
-    } else if (yBolinha === raio) {
+    } else if (yBolinha <= raio) {
         fatorY = +1
     }
 }
