@@ -30,8 +30,10 @@ function limpaRastroBolinha(x,y){
 let vida = 4
 function colisao() {
     let contato = localDaBatida(yBolinha, yRaqueteA)
+    let yRaqueteB = desenhaRaqueteB(yBolinha)
     let colideA = (yBolinha >= yRaqueteA && yBolinha <= yRaqueteA+80 && xBolinha <= 15+raio) ? true : false
     let colideB = false 
+    colideB = (yBolinha >= yRaqueteB && yBolinha <= yRaqueteB+80 && xBolinha >= 600-15-raio) ? true : false
 
     if (xBolinha >= 600-raio || colideB) {
         fatorX = -1
@@ -96,7 +98,7 @@ function desenhaRaqueteB(y) {
     }
     
     pincel.fillRect (590,y2,5,80)
-
+    return y2
 
 }
 // RAQUETE-B AUTOMATICA
@@ -131,12 +133,13 @@ function refresh() {
     desenhaRaqueteA(yRaqueteA)
     desenhaRaqueteB(yBolinha)
     desenhaBolinha(xBolinha,yBolinha)
+    var yRaqueteB = desenhaRaqueteB(yBolinha)
     colisao()
     pontua()
     xBolinha = xBolinha + fatorX*(5+vel)
     yBolinha = yBolinha + fatorY * ataque 
     footer.innerHTML = `xBolinha: ${xBolinha}<br>yBolinha: ${yBolinha}<br>yRaqueteA:${yRaqueteA}
-    <br>ataque: ${ataque}<br> velocidade bolinha${vel}`
+    <br>ataque: ${ataque}<br> yRaqueteB: ${yRaqueteB}`
     
 }
 // REFRESH
