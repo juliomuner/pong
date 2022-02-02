@@ -82,12 +82,22 @@ function desenhaRaqueteA(y) {
 
 // RAQUETE-B AUTOMATICA
 function desenhaRaqueteB(y) {
-    if (y > 100 && y <= 440) {
-        pincel.fillStyle = 'black'  // limpar rastro da raquete
-        pincel.fillRect(590,0,15,400) // limpar rastro da raquete
-        pincel.fillStyle = 'white'
-        pincel.fillRect (590,y-(25*ataque),5,80)  // inteligencia artificial
+    // y = yBolinha
+    pincel.fillStyle = 'black'  // limpar rastro da raquete
+    pincel.fillRect(590,0,15,400) // limpar rastro da raquete
+    pincel.fillStyle = 'white'
+
+    let y2 = y-40 // para centralizar a bola
+    // adicionando os limites
+    if (y < 50) {
+        y2 = 10
+    } else if (y >= 350) {
+        y2 = 310
     }
+    
+    pincel.fillRect (590,y2,5,80)
+
+
 }
 // RAQUETE-B AUTOMATICA
 
@@ -118,10 +128,9 @@ tela.onmousemove = movimentaRaquete
 setInterval(refresh, velocidadeXBolinha)
 function refresh() {
     limpaRastroBolinha(xBolinha,yBolinha)
-    desenhaBolinha(xBolinha,yBolinha)
     desenhaRaqueteA(yRaqueteA)
     desenhaRaqueteB(yBolinha)
-
+    desenhaBolinha(xBolinha,yBolinha)
     colisao()
     pontua()
     xBolinha = xBolinha + fatorX*(5+vel)
