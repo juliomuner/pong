@@ -1,11 +1,17 @@
 let xBolinha = 300
 let yBolinha = 200
 let raio = 10
-let velocidadeXBolinha = 15
+let velocidadeXBolinha = 150
 let fatorX = 1
 let fatorY = -1
 let ataque = 0
-let yRaqueteA = 10
+let alturaDaColisao = 0
+let inicioRaqueteA = 10
+let centroRaqueteA = inicioRaqueteA + 40
+let fimRaqueteA = inicioRaqueteA + 80
+let inicioRaqueteB = 200
+let centroRaqueteB = inicioRaqueteB + 40
+let fimRaqueteB = inicioRaqueteB + 80
 
 let tela = document.querySelector('canvas')
 let pincel = tela.getContext('2d')
@@ -19,6 +25,9 @@ function desenhaBolinha(x,y) {
     pincel.beginPath()
     pincel.arc(x,y,raio,0,Math.PI*2)
     pincel.fill()
+    let sinal = (yBolinha > 200) ? 1 : -1
+    let distanciaXDoCentro = parseInt(Math.pow(((yBolinha - 200)/40),2)/5)*sinal
+    return sinal
 }
 
 function limpaRastroBolinha(x,y){
@@ -29,45 +38,47 @@ function limpaRastroBolinha(x,y){
 }
 let vida = 4
 function colisao() {
-    let contato = localDaBatida(yBolinha, yRaqueteA)
-    let yRaqueteB = desenhaRaqueteB(yBolinha)
-    let colideA = (yBolinha >= yRaqueteA && yBolinha <= yRaqueteA+80 && xBolinha <= 15+raio) ? true : false
-    let colideB = false 
-    colideB = (yBolinha >= yRaqueteB && yBolinha <= yRaqueteB+80 && xBolinha >= 600-15-raio) ? true : false
-
+    let contato = localDaBatida(yBolinha, inicioRaqueteA)
+    let colideA = (yBolinha >= inicioRaqueteA && yBolinha <= fimRaqueteA && xBolinha <= 0+15+raio) ? true : false
+    let colideB = (yBolinha >= inicioRaqueteB && yBolinha <= fimRaqueteB && xBolinha >= 600-15-raio) ? true : false
+    
+    
     if (xBolinha >= 600-raio || colideB) {
         fatorX = -1
         if (colideB == false) {
             vida = vida + (vida < 9 ? 1 : 0)
-            footer.innerHTML = vida+1 // só pra ve o html
             desenhaPixel(vida,'blue')
         }
+
+    // COLISÃO LADO A
     } else if (xBolinha <= raio || colideA) {
         fatorX = +1 // tanto faz a colisão, altera a o sentido
-        ataque = contato // em qualquer colisão muda o angulo de ataque conforme função localDaBatida
-        
-        // se a colisão for na casquinha
-        if (contato == 5 && yBolinha < yRaqueteA +40) {
+        ataque = contato // em qualquer colisão muda o angulo de ataque conforme função localDaBatida     
+        alturaDaColisao = desenhaBolinha(xBolinha, yBolinha)
+        // se a colisão for na casquinha troca o sentido vertical
+        if (contato == 5 && yBolinha < centroRaqueteA) {
             fatorY = -1
-        } else if (contato == 5 && yBolinha > yRaqueteA +40) {
+        } else if (contato == 5 && yBolinha > centroRaqueteA) {
             fatorY = +1
         }
 
         if (colideA == false) {     // porém se não bater na raquete
             vida = vida + (vida >= 0 ? -1 : 0)
             desenhaPixel(vida,'red')
-            ataque = 2
+            ataque = 0
+            xBolinha = 40
+            yBolinha = 200
+            limpaRastroBolinha(xBolinha,yBolinha)
         }
-        
     }
 
-    // Colisão com topo ou chao
+    // COLISÃO COM CHÃO
     if (yBolinha >= 400-raio) {
         fatorY = -1
     } else if (yBolinha <= raio) {
         fatorY = +1
     }
-    
+    div1.innerHTML = `<br> colideA ${colideA}<br>`
 }
 
 function desenhaRaqueteA(y) {
@@ -82,47 +93,38 @@ function desenhaRaqueteA(y) {
     pincel.fillRect (10,y2,5,80)
 }
 
-// RAQUETE-B AUTOMATICA
-function desenhaRaqueteB(y) {
+// RAQUETE-B
+function desenhaRaqueteB(yBolinha) {
     // y = yBolinha
     pincel.fillStyle = 'black'  // limpar rastro da raquete
     pincel.fillRect(590,0,15,400) // limpar rastro da raquete
     pincel.fillStyle = 'white'
 
-    let y2 = y-40 // para centralizar a bola
+    //inteligencia artificial
+    delayBolinha = yBolinha + 12*ataque*alturaDaColisao
+        
     // adicionando os limites
-    if (y < 50) {
-        y2 = 10
-    } else if (y >= 350) {
-        y2 = 310
+    if (delayBolinha < 50) {
+        inicioRaqueteB = 10
+    } else if (delayBolinha >= 350) {
+        inicioRaqueteB = 310
+    } else {
+        inicioRaqueteB = delayBolinha-40 // para centralizar a bola
     }
+    centroRaqueteB = inicioRaqueteB + 40
+    fimRaqueteB = inicioRaqueteB + 80
     
-    pincel.fillRect (590,y2,5,80)
-    return y2
+    pincel.fillRect (590,inicioRaqueteB,5,80)
 
 }
-// RAQUETE-B AUTOMATICA
-
-// MOVENDO COM SETAS
-var cima = 38;
-var baixo = 40;
-
-
-let vel = 1
-function teclado(evento) { 
-    if (evento.keyCode == baixo) {
-        vel++
-    } else if (evento.keyCode == cima) {
-        vel--
-    }  
-}
-document.onkeydown = teclado
-// MOVENDO COM SETAS */
+// RAQUETE-B
 
 //movendo com mouse
 function movimentaRaquete(evento) {
-    yRaqueteA = evento.pageY - tela.offsetTop -40
-    desenhaRaqueteA(yRaqueteA)
+    inicioRaqueteA = evento.pageY - tela.offsetTop -40
+    centroRaqueteA = inicioRaqueteA + 40
+    fimRaqueteA = inicioRaqueteA + 80
+    desenhaRaqueteA(inicioRaqueteA)
 }
 tela.onmousemove = movimentaRaquete
 
@@ -130,16 +132,15 @@ tela.onmousemove = movimentaRaquete
 setInterval(refresh, velocidadeXBolinha)
 function refresh() {
     limpaRastroBolinha(xBolinha,yBolinha)
-    desenhaRaqueteA(yRaqueteA)
+    desenhaRaqueteA(inicioRaqueteA)
     desenhaRaqueteB(yBolinha)
     desenhaBolinha(xBolinha,yBolinha)
-    var yRaqueteB = desenhaRaqueteB(yBolinha)
     colisao()
     pontua()
-    xBolinha = xBolinha + fatorX*(5+vel)
+    xBolinha = xBolinha + fatorX*5
     yBolinha = yBolinha + fatorY * ataque 
-    footer.innerHTML = `xBolinha: ${xBolinha}<br>yBolinha: ${yBolinha}<br>yRaqueteA:${yRaqueteA}
-    <br>ataque: ${ataque}<br> yRaqueteB: ${yRaqueteB}`
+    footer.innerHTML = `xBolinha: ${xBolinha}<br>yBolinha: ${yBolinha}<br>inicioRaqueteA:${inicioRaqueteA}
+    <br>ataque: ${ataque}<br> centroRaqueteB: ${centroRaqueteB}<br> Altura da colisão ${alturaDaColisao} e ${desenhaBolinha(xBolinha, yBolinha)}`
     
 }
 // REFRESH
